@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FinPulse</string>
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_transactions">Transactions</string>
+    <string name="nav_intelligence">Intelligence</string>
+    <string name="nav_more">More</string>
+    <string name="dashboard_greeting">Your financial overview</string>
+    <string name="dashboard_balance">Monthly balance</string>
+    <string name="dashboard_income">Income</string>
+    <string name="dashboard_expenses">Expenses</string>
+    <string name="dashboard_health_score">Health Score</string>
+    <string name="dashboard_insights">Insights</string>
+    <string name="dashboard_alerts">Alerts</string>
+    <string name="dashboard_empty_insights">No insights yet. Add transactions to unlock intelligence.</string>
+    <string name="transactions_placeholder">Transactions — coming soon</string>
+    <string name="intelligence_placeholder">Financial intelligence — coming soon</string>
+    <string name="more_placeholder">Settings and reports — coming soon</string>
+    <string name="loading">Loading…</string>
+    <string name="error_generic">Could not load dashboard</string>
+    <string name="retry">Retry</string>
+    <string name="dashboard_overview">Financial overview</string>
+    <string name="dashboard_budgets">Budgets</string>
+    <string name="dashboard_goals">Goals</string>
+    <string name="dashboard_debt">Total debt</string>
+    <string name="dashboard_projections">Projections</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_dashboard">Painel</string>
+    <string name="nav_transactions">Movimentos</string>
+    <string name="nav_intelligence">Inteligência</string>
+    <string name="nav_more">Mais</string>
+    <string name="dashboard_greeting">Seu panorama financeiro</string>
+    <string name="dashboard_balance">Saldo do mês</string>
+    <string name="dashboard_income">Receitas</string>
+    <string name="dashboard_expenses">Despesas</string>
+    <string name="dashboard_health_score">Health Score</string>
+    <string name="dashboard_insights">Insights</string>
+    <string name="dashboard_alerts">Alertas</string>
+    <string name="dashboard_empty_insights">Sem insights ainda. Registre movimentos para ativar a inteligência.</string>
+    <string name="transactions_placeholder">Movimentos — em breve</string>
+    <string name="intelligence_placeholder">Inteligência financeira — em breve</string>
+    <string name="more_placeholder">Ajustes e relatórios — em breve</string>
+    <string name="loading">Carregando…</string>
+    <string name="error_generic">Não foi possível carregar o painel</string>
+    <string name="retry">Tentar novamente</string>
+</resources>

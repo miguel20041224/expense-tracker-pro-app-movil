@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FinPulse</string>
+    <string name="nav_dashboard">Panel</string>
+    <string name="nav_transactions">Movimientos</string>
+    <string name="nav_intelligence">Inteligencia</string>
+    <string name="nav_more">Más</string>
+    <string name="dashboard_greeting">Tu panorama financiero</string>
+    <string name="dashboard_balance">Balance del mes</string>
+    <string name="dashboard_income">Ingresos</string>
+    <string name="dashboard_expenses">Gastos</string>
+    <string name="dashboard_health_score">Health Score</string>
+    <string name="dashboard_insights">Insights</string>
+    <string name="dashboard_alerts">Alertas</string>
+    <string name="dashboard_empty_insights">Sin insights aún. Registra movimientos para activar la inteligencia.</string>
+    <string name="transactions_placeholder">Movimientos — próximamente</string>
+    <string name="intelligence_placeholder">Inteligencia financiera — próximamente</string>
+    <string name="more_placeholder">Ajustes y reportes — próximamente</string>
+    <string name="loading">Cargando…</string>
+    <string name="error_generic">No se pudo cargar el panel</string>
+    <string name="retry">Reintentar</string>
+    <string name="dashboard_overview">Resumen financiero</string>
+    <string name="dashboard_budgets">Presupuestos</string>
+    <string name="dashboard_goals">Metas</string>
+    <string name="dashboard_debt">Deuda total</string>
+    <string name="dashboard_projections">Proyecciones</string>
+</resources>

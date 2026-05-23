@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_dashboard">Übersicht</string>
+    <string name="nav_transactions">Buchungen</string>
+    <string name="nav_intelligence">Intelligenz</string>
+    <string name="nav_more">Mehr</string>
+    <string name="dashboard_greeting">Ihr Finanzüberblick</string>
+    <string name="dashboard_balance">Monatssaldo</string>
+    <string name="dashboard_income">Einnahmen</string>
+    <string name="dashboard_expenses">Ausgaben</string>
+    <string name="dashboard_health_score">Health Score</string>
+    <string name="dashboard_insights">Insights</string>
+    <string name="dashboard_alerts">Warnungen</string>
+    <string name="dashboard_empty_insights">Noch keine Insights. Erfassen Sie Buchungen, um die Intelligenz zu aktivieren.</string>
+    <string name="transactions_placeholder">Buchungen — demnächst</string>
+    <string name="intelligence_placeholder">Finanzintelligenz — demnächst</string>
+    <string name="more_placeholder">Einstellungen und Berichte — demnächst</string>
+    <string name="loading">Laden…</string>
+    <string name="error_generic">Dashboard konnte nicht geladen werden</string>
+    <string name="retry">Erneut versuchen</string>
+</resources>
