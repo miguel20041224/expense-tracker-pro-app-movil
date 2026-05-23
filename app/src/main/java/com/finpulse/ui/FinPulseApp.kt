@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.finpulse.R
+import com.finpulse.ui.auth.AuthNavHost
 import com.finpulse.ui.navigation.FinPulseNavHost
 import com.finpulse.ui.root.AppRootViewModel
 
@@ -26,11 +26,12 @@ fun FinPulseApp(
     viewModel: AppRootViewModel = hiltViewModel(),
 ) {
     val isReady by viewModel.isReady.collectAsStateWithLifecycle()
+    val loggedInUserId by viewModel.loggedInUserId.collectAsStateWithLifecycle()
 
-    if (!isReady) {
-        SplashScreen()
-    } else {
-        FinPulseNavHost()
+    when {
+        !isReady -> SplashScreen()
+        loggedInUserId == null -> AuthNavHost(onLoggedIn = viewModel::onLoggedIn)
+        else -> FinPulseNavHost()
     }
 }
 

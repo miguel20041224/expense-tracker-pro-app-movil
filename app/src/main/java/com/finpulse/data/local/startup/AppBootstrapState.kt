@@ -14,4 +14,8 @@ class AppBootstrapState @Inject constructor() {
     fun markReady() {
         _isReady.value = true
     }
+
+    fun reset() {
+        _isReady.value = false
+    }
 }

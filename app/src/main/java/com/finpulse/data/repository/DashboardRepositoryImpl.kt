@@ -5,9 +5,11 @@ import com.finpulse.data.local.db.dao.FinanceCatalogDao
 import com.finpulse.data.local.db.dao.InsightDao
 import com.finpulse.data.local.db.entity.FinancialInsightEntity
 import com.finpulse.data.mapper.toDomain
+import com.finpulse.data.session.CurrentUserProvider
 import com.finpulse.domain.model.DashboardSnapshot
 import com.finpulse.domain.model.MonthlyTrendPoint
 import com.finpulse.domain.repository.DashboardRepository
+import com.finpulse.domain.repository.FinancialIntelligenceRepository
 import com.finpulse.util.MonthRange
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -20,27 +22,30 @@ class DashboardRepositoryImpl @Inject constructor(
     private val dashboardDao: DashboardDao,
     private val insightDao: InsightDao,
     private val financeCatalogDao: FinanceCatalogDao,
+    private val intelligenceRepository: FinancialIntelligenceRepository,
+    private val currentUser: CurrentUserProvider,
 ) : DashboardRepository {
 
     override fun observeDashboard(): Flow<DashboardSnapshot> {
+        val userId = currentUser.requireUserId()
         val range = MonthRange.current()
         val trendSince = ZonedDateTime.now().minusMonths(6).toInstant().toEpochMilli()
 
         val cashFlow = combine(
-            dashboardDao.observeIncomeMinor(range.startEpochMilli, range.endEpochMilli),
-            dashboardDao.observeExpenseMinor(range.startEpochMilli, range.endEpochMilli),
-            insightDao.observeRecentInsights(5),
-            insightDao.observeUnreadAlertCount(),
-            dashboardDao.observeMonthlyCashFlow(trendSince),
+            dashboardDao.observeIncomeMinor(userId, range.startEpochMilli, range.endEpochMilli),
+            dashboardDao.observeExpenseMinor(userId, range.startEpochMilli, range.endEpochMilli),
+            insightDao.observeRecentInsights(userId, 5),
+            insightDao.observeUnreadAlertCount(userId),
+            dashboardDao.observeMonthlyCashFlow(userId, trendSince),
         ) { income, expense, insights, unread, trend ->
             CashFlowData(income, expense, insights, unread, trend)
         }
 
         val catalog = combine(
-            financeCatalogDao.observeBudgetCount(),
-            financeCatalogDao.observeGoalCount(),
-            financeCatalogDao.observeTotalDebtMinor(),
-            financeCatalogDao.observeProjectionCount(),
+            financeCatalogDao.observeBudgetCount(userId),
+            financeCatalogDao.observeGoalCount(userId),
+            financeCatalogDao.observeTotalDebtMinor(userId),
+            financeCatalogDao.observeProjectionCount(userId),
         ) { budgets, goals, debt, projections ->
             CatalogData(budgets, goals, debt, projections)
         }
@@ -69,55 +74,7 @@ class DashboardRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun refreshIntelligence() {
-        val range = MonthRange.current()
-        val income = dashboardDao.incomeMinorOnce(range.startEpochMilli, range.endEpochMilli)
-        val expense = dashboardDao.expenseMinorOnce(range.startEpochMilli, range.endEpochMilli)
-        val score = computeHealthScore(income, expense)
-        val savingsRate = if (income > 0) ((income - expense).toDouble() / income * 100).toInt() else 0
-
-        val insights = buildList {
-            add(
-                FinancialInsightEntity(
-                    type = "HEALTH_SCORE",
-                    title = "Health Score",
-                    body = "Score: $score/100",
-                    severity = when {
-                        score >= 75 -> "LOW"
-                        score >= 50 -> "MEDIUM"
-                        else -> "HIGH"
-                    },
-                    metadataJson = """{"score":$score}""",
-                    createdAt = System.currentTimeMillis(),
-                ),
-            )
-            if (expense > income) {
-                add(
-                    FinancialInsightEntity(
-                        type = "OVERSPEND",
-                        title = "Gastos superan ingresos",
-                        body = "Este mes tus gastos superan los ingresos. Revisa categorías principales.",
-                        severity = "HIGH",
-                        metadataJson = null,
-                        createdAt = System.currentTimeMillis(),
-                    ),
-                )
-            } else if (savingsRate >= 20) {
-                add(
-                    FinancialInsightEntity(
-                        type = "SAVINGS",
-                        title = "Buen ritmo de ahorro",
-                        body = "Ahorras aproximadamente $savingsRate% de tus ingresos este mes.",
-                        severity = "LOW",
-                        metadataJson = null,
-                        createdAt = System.currentTimeMillis(),
-                    ),
-                )
-            }
-        }
-        insightDao.clearInsights()
-        insightDao.insertInsights(insights)
-    }
+    override suspend fun refreshIntelligence() = intelligenceRepository.refresh()
 
     private fun computeHealthScore(income: Long, expense: Long): Int {
         if (income <= 0L) return 40

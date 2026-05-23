@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.finpulse.R
 import com.finpulse.domain.model.DashboardSnapshot
 import com.finpulse.domain.model.FinancialInsight
+import com.finpulse.ui.components.CashFlowChart
 import com.finpulse.ui.theme.FinAmber
 import com.finpulse.ui.theme.FinEmerald
 import com.finpulse.ui.theme.FinRose
@@ -40,13 +42,14 @@ import com.finpulse.util.MoneyFormat
 
 @Composable
 fun DashboardScreen(
+    onAlerts: () -> Unit = {},
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     when {
         state.isLoading -> LoadingState()
         state.errorMessage != null -> ErrorState(onRetry = viewModel::refresh)
-        state.snapshot != null -> DashboardContent(state.snapshot!!)
+        state.snapshot != null -> DashboardContent(state.snapshot!!, onAlerts)
     }
 }
 
@@ -71,7 +74,7 @@ private fun ErrorState(onRetry: () -> Unit) {
 }
 
 @Composable
-private fun DashboardContent(snapshot: DashboardSnapshot) {
+private fun DashboardContent(snapshot: DashboardSnapshot, onAlerts: () -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -90,7 +93,21 @@ private fun DashboardContent(snapshot: DashboardSnapshot) {
             )
         }
         item {
-            HealthScoreCard(score = snapshot.healthScore, alerts = snapshot.unreadAlerts)
+            HealthScoreCard(score = snapshot.healthScore, alerts = snapshot.unreadAlerts, onAlerts = onAlerts)
+        }
+        item {
+            Text(stringResource(R.string.dashboard_cashflow_chart), style = MaterialTheme.typography.titleLarge)
+        }
+        item {
+            Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
+                Column(Modifier.padding(16.dp)) {
+                    CashFlowChart(trend = snapshot.monthlyTrend)
+                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.padding(top = 8.dp)) {
+                        Text("● ${stringResource(R.string.dashboard_income)}", color = FinEmerald, style = MaterialTheme.typography.labelSmall)
+                        Text("● ${stringResource(R.string.dashboard_expenses)}", color = FinRose, style = MaterialTheme.typography.labelSmall)
+                    }
+                }
+            }
         }
         item {
             Text(
@@ -209,7 +226,7 @@ private fun MetricColumn(label: String, value: String, color: androidx.compose.u
 }
 
 @Composable
-private fun HealthScoreCard(score: Int, alerts: Int) {
+private fun HealthScoreCard(score: Int, alerts: Int, onAlerts: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -229,11 +246,12 @@ private fun HealthScoreCard(score: Int, alerts: Int) {
                 },
             )
             if (alerts > 0) {
-                Text(
-                    "${stringResource(R.string.dashboard_alerts)}: $alerts",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = FinAmber,
-                )
+                TextButton(onClick = onAlerts) {
+                    Text(
+                        "${stringResource(R.string.dashboard_alerts)}: $alerts →",
+                        color = FinAmber,
+                    )
+                }
             }
         }
     }

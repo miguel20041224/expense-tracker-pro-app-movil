@@ -21,16 +21,25 @@ import androidx.room.PrimaryKey
             childColumns = ["category_id"],
             onDelete = ForeignKey.SET_NULL,
         ),
+        ForeignKey(
+            entity = UserEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["user_id"],
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
     indices = [
         Index(value = ["occurred_at"]),
         Index(value = ["type"]),
         Index(value = ["account_id"]),
         Index(value = ["category_id"]),
+        Index(value = ["user_id"]),
+        Index(value = ["is_recurring"]),
     ],
 )
 data class TransactionEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @ColumnInfo(name = "user_id") val userId: Long,
     @ColumnInfo(name = "account_id") val accountId: Long,
     @ColumnInfo(name = "category_id") val categoryId: Long?,
     val type: String,
@@ -38,4 +47,6 @@ data class TransactionEntity(
     val note: String?,
     @ColumnInfo(name = "occurred_at") val occurredAt: Long,
     @ColumnInfo(name = "created_at") val createdAt: Long,
+    @ColumnInfo(name = "is_recurring") val isRecurring: Boolean = false,
+    @ColumnInfo(name = "recurrence_rule") val recurrenceRule: String? = null,
 )

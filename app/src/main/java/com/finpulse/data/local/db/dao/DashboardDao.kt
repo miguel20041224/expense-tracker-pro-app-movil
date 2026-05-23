@@ -11,37 +11,37 @@ interface DashboardDao {
         """
         SELECT COALESCE(SUM(amount_minor), 0)
         FROM transactions
-        WHERE type = 'INCOME' AND occurred_at >= :start AND occurred_at < :end
+        WHERE user_id = :userId AND type = 'INCOME' AND occurred_at >= :start AND occurred_at < :end
         """,
     )
-    fun observeIncomeMinor(start: Long, end: Long): Flow<Long>
+    fun observeIncomeMinor(userId: Long, start: Long, end: Long): Flow<Long>
 
     @Query(
         """
         SELECT COALESCE(SUM(amount_minor), 0)
         FROM transactions
-        WHERE type = 'EXPENSE' AND occurred_at >= :start AND occurred_at < :end
+        WHERE user_id = :userId AND type = 'EXPENSE' AND occurred_at >= :start AND occurred_at < :end
         """,
     )
-    fun observeExpenseMinor(start: Long, end: Long): Flow<Long>
+    fun observeExpenseMinor(userId: Long, start: Long, end: Long): Flow<Long>
 
     @Query(
         """
         SELECT COALESCE(SUM(amount_minor), 0)
         FROM transactions
-        WHERE type = 'INCOME' AND occurred_at >= :start AND occurred_at < :end
+        WHERE user_id = :userId AND type = 'INCOME' AND occurred_at >= :start AND occurred_at < :end
         """,
     )
-    suspend fun incomeMinorOnce(start: Long, end: Long): Long
+    suspend fun incomeMinorOnce(userId: Long, start: Long, end: Long): Long
 
     @Query(
         """
         SELECT COALESCE(SUM(amount_minor), 0)
         FROM transactions
-        WHERE type = 'EXPENSE' AND occurred_at >= :start AND occurred_at < :end
+        WHERE user_id = :userId AND type = 'EXPENSE' AND occurred_at >= :start AND occurred_at < :end
         """,
     )
-    suspend fun expenseMinorOnce(start: Long, end: Long): Long
+    suspend fun expenseMinorOnce(userId: Long, start: Long, end: Long): Long
 
     @Query(
         """
@@ -49,10 +49,10 @@ interface DashboardDao {
                COALESCE(SUM(CASE WHEN type = 'INCOME' THEN amount_minor ELSE 0 END), 0) AS incomeMinor,
                COALESCE(SUM(CASE WHEN type = 'EXPENSE' THEN amount_minor ELSE 0 END), 0) AS expenseMinor
         FROM transactions
-        WHERE occurred_at >= :since
+        WHERE user_id = :userId AND occurred_at >= :since
         GROUP BY monthKey
         ORDER BY monthKey ASC
         """,
     )
-    fun observeMonthlyCashFlow(since: Long): Flow<List<MonthlyCashFlowRow>>
+    fun observeMonthlyCashFlow(userId: Long, since: Long): Flow<List<MonthlyCashFlowRow>>
 }
